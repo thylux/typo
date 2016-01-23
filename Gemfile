@@ -58,3 +58,8 @@ group :development, :test do
   gem 'database_cleaner'
   gem 'capybara'
 end
+
+group :development do
+  gem 'rerun'
+  gem 'autotest'
+end
