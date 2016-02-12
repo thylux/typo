@@ -51,6 +51,22 @@ class Admin::ContentController < Admin::BaseController
     flash[:notice] = _("This article was deleted successfully")
     redirect_to :action => 'index'
   end
+  
+  def merge
+    if current_user.login == 'admin'
+      merge_with_id = params[:merge_with]
+      if merge_with_id != params[:id] and Article.exists? merge_with_id
+        article = Article.find(params[:id])
+        article.merge_with merge_with_id
+        flash[:notice] = 'The articles were merged successfully'
+      else
+        flash[:error] = 'Invalid article ID'
+      end
+    else
+      flash[:error] = 'Only admin can merge articles'
+    end
+    redirect_to :action => 'edit', :id => params[:id]
+  end
 
   def insert_editor
     editor = 'visual'
@@ -239,12 +255,5 @@ class Admin::ContentController < Admin::BaseController
 
   def setup_resources
     @resources = Resource.by_created_at
-  end
-  
-  def merge_with(id)
-    article_to_merge = Article.find_by_id(id)
-    @article.body += article_to_merge.body
-    @article.save!
-    article_to_merge.destroy
   end
 end

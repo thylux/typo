@@ -415,6 +415,16 @@ class Article < Content
   def access_by?(user)
     user.admin? || user_id == user.id
   end
+  
+  def merge_with(merge_with_id)
+    article_to_merge = Article.find merge_with_id
+    self.body += article_to_merge.body
+    article_to_merge.comments.each do |comment|
+      self.add_comment(comment)
+    end
+    self.save!
+    article_to_merge.destroy
+  end  
 
   protected
 
